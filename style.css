@@ -253,3 +253,26 @@
 @media(max-width:760px){
   .header .primary-nav>a:nth-child(5){order:initial!important}
 }
+
+/* 2026-09-23 mobile hero title + service photo crop refinement */
+@media(max-width:760px){
+  .home-page .hero-home h1{
+    font-size:clamp(2.05rem,9vw,2.8rem);
+    line-height:1.19;
+  }
+  .services-page .service-photo{
+    aspect-ratio:16/9;
+  }
+  .services-page .service-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .services-page .service-info-grid article:nth-child(1) .service-photo img{object-position:center 48%}
+  .services-page .service-info-grid article:nth-child(2) .service-photo img{object-position:center 56%}
+  .services-page .service-info-grid article:nth-child(3) .service-photo img{object-position:center 50%}
+  .services-page .service-info-grid article:nth-child(4) .service-photo img{object-position:center 44%}
+}
+@media(max-width:390px){
+  .home-page .hero-home h1{font-size:2rem}
+}
