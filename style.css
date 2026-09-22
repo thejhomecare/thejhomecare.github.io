@@ -46,3 +46,6 @@
 /* Case count display: hidden until the archive is large enough to use as a trust signal. */
 .board-switch span,.board-filters span{display:none}
 .board-count{display:none}
+
+/* Mobile nav priority: keep case studies visible without horizontal hunting. */
+@media(max-width:760px){.header .primary-nav>a:nth-child(5){order:-1}}
