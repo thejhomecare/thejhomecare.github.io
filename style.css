@@ -184,3 +184,67 @@
   .service-photo img{height:210px}
   .service-info-grid{gap:32px}
 }
+
+/* Homepage mobile navigation restore: keep all section links accessible. */
+.home-mobile-contact{display:none}
+@media(max-width:760px){
+  .home-page .header-inner{
+    min-height:0;
+    flex-wrap:wrap;
+    padding:9px 0 0;
+    gap:8px 12px;
+  }
+  .home-page .brand{order:1}
+  .home-page .home-mobile-contact{
+    order:1;
+    display:inline-flex;
+    margin-left:auto;
+    align-items:center;
+    justify-content:center;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-size:.8rem;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  .home-page .header .primary-nav{
+    order:2;
+    width:100%;
+    margin-left:0;
+    display:flex;
+    overflow-x:auto;
+    gap:22px;
+    padding:0;
+    align-items:center;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .home-page .header .primary-nav::-webkit-scrollbar{display:none}
+  .home-page .header .primary-nav>a{
+    display:inline-flex!important;
+    flex-shrink:0;
+    padding:10px 0 12px;
+    border:0;
+    border-bottom:2px solid transparent;
+    border-radius:0;
+    font-size:.82rem;
+  }
+  .home-page .header .primary-nav>a:first-child,
+  .home-page .header .primary-nav>.nav-contact{
+    display:none!important;
+  }
+  .home-page .header .primary-nav>a:nth-child(5){
+    display:inline-flex!important;
+    order:initial;
+    padding:10px 0 12px;
+    border-bottom:2px solid transparent;
+    font-size:.82rem;
+  }
+}
+@media(max-width:390px){
+  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important}
+  .home-page .home-mobile-contact{font-size:.76rem;padding:8px 9px}
+  .home-page .header .primary-nav{gap:18px}
+  .home-page .header .primary-nav>a{font-size:.78rem}
+}
