@@ -41,3 +41,8 @@
 .brand-logo,.footer-brand>img{width:110px;height:50px;object-fit:cover;object-position:50% 15%;border-radius:5px}
 @media(max-width:620px){.brand-logo{width:90px;height:41px}}
 @media(max-width:370px){.brand-logo{width:78px;height:35.5px}}
+
+
+/* Case count display: hidden until the archive is large enough to use as a trust signal. */
+.board-switch span,.board-filters span{display:none}
+.board-count{display:none}
