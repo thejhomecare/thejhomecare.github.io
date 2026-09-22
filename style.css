@@ -185,34 +185,79 @@
   .service-info-grid{gap:32px}
 }
 
-/* Homepage mobile navigation restore: keep all section links accessible. */
-.home-mobile-contact{display:none}
+/* 2026-09-23 consolidated shared header, subpage alignment and mobile refinements */
+.header-inner{min-height:80px}
+.home-mobile-contact{display:none!important}
+
+@media(min-width:761px){
+  .pricing-page main#main,
+  .services-page main#main,
+  .materials-page main#main{padding-top:35px}
+
+  .pricing-page .board-heading,
+  .services-page .board-heading,
+  .materials-page .board-heading,
+  .board-main .board-heading{padding-top:48px}
+}
+
 @media(max-width:760px){
+  .header-inner,
   .home-page .header-inner{
+    position:relative;
     min-height:0;
     flex-wrap:wrap;
     padding:9px 0 0;
     gap:8px 12px;
   }
-  .home-page .brand{order:1}
-  .home-page .home-mobile-contact{
+
+  .brand,
+  .home-page .brand{
     order:1;
-    display:inline-flex;
-    margin-left:auto;
+    gap:8px;
+    font-size:.98rem;
+  }
+
+  .brand-logo,
+  .home-page .brand-logo{
+    width:76px;
+    height:35px;
+  }
+
+  .brand > span,
+  .home-page .brand > span{
+    display:flex;
     align-items:center;
-    justify-content:center;
-    padding:9px 11px;
-    border:1px solid var(--line);
-    border-radius:5px;
-    font-size:.8rem;
-    font-weight:700;
+    gap:6px;
     white-space:nowrap;
   }
+
+  .brand small,
+  .home-page .brand small{
+    display:inline-flex!important;
+    margin:0;
+    font-size:0;
+    line-height:1;
+    letter-spacing:0;
+    font-weight:600;
+    color:var(--muted);
+  }
+
+  .brand small::after,
+  .home-page .brand small::after{
+    content:"방충망";
+    font-size:.68rem;
+    line-height:1;
+    letter-spacing:0;
+    font-weight:600;
+  }
+
+  .header .primary-nav,
   .home-page .header .primary-nav{
     order:2;
     width:100%;
     margin-left:0;
     display:flex;
+    flex-wrap:nowrap;
     overflow-x:auto;
     gap:22px;
     padding:0;
@@ -220,49 +265,67 @@
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
   }
+
+  .header .primary-nav::-webkit-scrollbar,
   .home-page .header .primary-nav::-webkit-scrollbar{display:none}
+
+  .header .primary-nav>a,
   .home-page .header .primary-nav>a{
     display:inline-flex!important;
     flex-shrink:0;
+    order:initial!important;
     padding:10px 0 12px;
     border:0;
     border-bottom:2px solid transparent;
     border-radius:0;
     font-size:.82rem;
   }
-  .home-page .header .primary-nav>a:first-child,
+
+  .header .primary-nav>a:first-child,
+  .home-page .header .primary-nav>a:first-child{display:none!important}
+
+  .header .primary-nav>a[aria-current="page"],
+  .home-page .header .primary-nav>a[aria-current="page"]{
+    color:var(--blue);
+    border-bottom-color:var(--blue);
+  }
+
+  .header .primary-nav>.nav-contact,
   .home-page .header .primary-nav>.nav-contact{
-    display:none!important;
-  }
-  .home-page .header .primary-nav>a:nth-child(5){
     display:inline-flex!important;
-    order:initial;
-    padding:10px 0 12px;
-    border-bottom:2px solid transparent;
-    font-size:.82rem;
+    position:absolute;
+    top:9px;
+    right:0;
+    width:auto;
+    margin:0;
+    padding:9px 11px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:white;
+    color:var(--ink);
+    font-size:.8rem;
+    font-weight:700;
+    line-height:1.2;
+    white-space:nowrap;
   }
-}
-@media(max-width:390px){
-  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important}
-  .home-page .home-mobile-contact{font-size:.76rem;padding:8px 9px}
-  .home-page .header .primary-nav{gap:18px}
-  .home-page .header .primary-nav>a{font-size:.78rem}
-}
 
-/* Mobile nav order consistency: keep the same link order on every page. */
-@media(max-width:760px){
-  .header .primary-nav>a:nth-child(5){order:initial!important}
-}
+  .pricing-page main#main,
+  .services-page main#main,
+  .materials-page main#main{padding-top:24px}
 
-/* 2026-09-23 mobile hero title + service photo crop refinement */
-@media(max-width:760px){
+  .pricing-page .board-heading,
+  .services-page .board-heading,
+  .materials-page .board-heading,
+  .board-main .board-heading{padding-top:34px}
+
   .home-page .hero-home h1{
     font-size:clamp(2.05rem,9vw,2.8rem);
     line-height:1.19;
   }
-  .services-page .service-photo{
-    aspect-ratio:16/9;
-  }
+
+  .services-page .service-photo{aspect-ratio:16/9}
   .services-page .service-photo img{
     width:100%;
     height:100%;
@@ -273,253 +336,34 @@
   .services-page .service-info-grid article:nth-child(3) .service-photo img{object-position:center 50%}
   .services-page .service-info-grid article:nth-child(4) .service-photo img{object-position:center 44%}
 }
+
 @media(max-width:390px){
+  .brand-logo,
+  .home-page .brand-logo{
+    width:68px;
+    height:31px;
+  }
+
+  .brand > span,
+  .home-page .brand > span{gap:5px}
+
+  .brand small::after,
+  .home-page .brand small::after{font-size:.64rem}
+
+  .header .primary-nav,
+  .home-page .header .primary-nav{gap:18px}
+
+  .header .primary-nav>a,
+  .home-page .header .primary-nav>a{font-size:.78rem}
+
+  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important}
+
+  .header .primary-nav>.nav-contact,
+  .home-page .header .primary-nav>.nav-contact{
+    top:8px;
+    padding:8px 9px;
+    font-size:.76rem;
+  }
+
   .home-page .hero-home h1{font-size:2rem}
-}
-
-
-/* 2026-09-23 mobile header unification: home proportions across all pages */
-@media(max-width:760px){
-  .header-inner{
-    min-height:0;
-    flex-wrap:wrap;
-    padding:9px 0 0;
-    gap:8px 12px;
-  }
-  .brand{
-    order:1;
-    gap:8px;
-    font-size:.98rem;
-  }
-  .brand small{display:none}
-  .brand-logo{width:76px;height:35px}
-  .header .primary-nav{
-    order:2;
-    width:100%;
-    margin-left:0;
-    display:flex;
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    gap:22px;
-    padding:0;
-    align-items:center;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .header .primary-nav::-webkit-scrollbar{display:none}
-  .header .primary-nav>a{
-    display:inline-flex!important;
-    flex-shrink:0;
-    padding:10px 0 12px;
-    border:0;
-    border-bottom:2px solid transparent;
-    border-radius:0;
-    font-size:.82rem;
-  }
-  .header .primary-nav>a:first-child,
-  .header .primary-nav>.nav-contact{
-    display:none!important;
-  }
-  .header .primary-nav>a:nth-child(5){
-    display:inline-flex!important;
-    order:initial!important;
-    padding:10px 0 12px;
-    border-bottom:2px solid transparent;
-    font-size:.82rem;
-  }
-}
-@media(max-width:390px){
-  .brand-logo{width:68px;height:31px}
-  .header .primary-nav{gap:18px}
-  .header .primary-nav>a{font-size:.78rem}
-}
-
-
-/* 2026-09-23 definitive header + subpage top spacing alignment */
-/* Desktop: use the home header height as the site-wide standard. */
-.header-inner{min-height:80px}
-
-/* Pricing / services / materials start at the same position as the cases board. */
-.pricing-page main#main,
-.services-page main#main,
-.materials-page main#main{padding-top:35px}
-
-@media(max-width:760px){
-  /* One mobile header layout for every page. */
-  .header-inner{
-    position:relative;
-    min-height:0;
-    flex-wrap:wrap;
-    padding:9px 0 0;
-    gap:8px 12px;
-  }
-  .brand{
-    order:1;
-    gap:8px;
-    font-size:.98rem;
-  }
-  .brand small{display:none}
-  .brand-logo{width:76px;height:35px}
-
-  /* The home-only duplicate button is replaced by the existing nav contact link. */
-  .home-mobile-contact{display:none!important}
-
-  .header .primary-nav{
-    order:2;
-    width:100%;
-    margin-left:0;
-    display:flex;
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    gap:22px;
-    padding:0;
-    align-items:center;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .header .primary-nav::-webkit-scrollbar{display:none}
-  .header .primary-nav>a{
-    display:inline-flex!important;
-    flex-shrink:0;
-    padding:10px 0 12px;
-    border:0;
-    border-bottom:2px solid transparent;
-    border-radius:0;
-    font-size:.82rem;
-  }
-  .header .primary-nav>a:first-child{display:none!important}
-  .header .primary-nav>a:nth-child(5){
-    display:inline-flex!important;
-    order:initial!important;
-  }
-
-  /* Same top-right consultation button on home and all subpages. */
-  .header .primary-nav>.nav-contact{
-    display:inline-flex!important;
-    position:absolute;
-    top:9px;
-    right:0;
-    width:auto;
-    margin:0;
-    padding:9px 11px;
-    align-items:center;
-    justify-content:center;
-    border:1px solid var(--line);
-    border-radius:5px;
-    background:white;
-    color:var(--ink);
-    font-size:.8rem;
-    font-weight:700;
-    line-height:1.2;
-    white-space:nowrap;
-  }
-
-  /* Match the clean spacing used by the case-list page. */
-  .pricing-page main#main,
-  .services-page main#main,
-  .materials-page main#main{padding-top:24px}
-}
-
-@media(max-width:390px){
-  .brand-logo{width:68px;height:31px}
-  .header .primary-nav{gap:18px}
-  .header .primary-nav>a{font-size:.78rem}
-  .header .primary-nav>.nav-contact{
-    top:8px;
-    padding:8px 9px;
-    font-size:.76rem;
-  }
-}
-
-
-/* 2026-09-23 home mobile consultation visibility fix */
-@media(max-width:760px){
-  .home-page .header .primary-nav>.nav-contact{
-    display:inline-flex!important;
-    position:absolute;
-    top:9px;
-    right:0;
-    width:auto;
-    margin:0;
-    padding:9px 11px;
-    align-items:center;
-    justify-content:center;
-    border:1px solid var(--line);
-    border-radius:5px;
-    background:white;
-    color:var(--ink);
-    font-size:.8rem;
-    font-weight:700;
-    line-height:1.2;
-    white-space:nowrap;
-  }
-}
-@media(max-width:390px){
-  .home-page .header .primary-nav>.nav-contact{
-    top:8px;
-    padding:8px 9px;
-    font-size:.76rem;
-  }
-}
-
-
-/* 2026-09-23 category heading alignment + mobile brand descriptor */
-/* Keep breadcrumb -> eyebrow -> H1 vertical rhythm identical across the four main sections. */
-@media(min-width:761px){
-  .pricing-page .board-heading,
-  .services-page .board-heading,
-  .materials-page .board-heading,
-  .board-main .board-heading{
-    padding-top:48px;
-  }
-}
-
-@media(max-width:760px){
-  .pricing-page .board-heading,
-  .services-page .board-heading,
-  .materials-page .board-heading,
-  .board-main .board-heading{
-    padding-top:34px;
-  }
-
-  /* Mobile brand: logo + business name + short service descriptor on one line. */
-  .brand > span{
-    display:flex;
-    align-items:baseline;
-    gap:6px;
-    white-space:nowrap;
-  }
-  .brand small{
-    display:inline-flex!important;
-    margin:0;
-    font-size:0;
-    line-height:1;
-    letter-spacing:0;
-    font-weight:600;
-    color:var(--muted);
-  }
-  .brand small::after{
-    content:"방충망";
-    font-size:.68rem;
-    line-height:1;
-    letter-spacing:0;
-    font-weight:600;
-  }
-}
-
-@media(max-width:390px){
-  .brand > span{gap:5px}
-  .brand small::after{font-size:.64rem}
-}
-
-
-/* 2026-09-23 mobile brand inline vertical alignment fix */
-@media(max-width:760px){
-  .brand > span{
-    align-items:center;
-  }
-  .brand small{
-    position:relative;
-    top:0;
-  }
 }
