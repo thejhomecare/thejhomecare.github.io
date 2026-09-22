@@ -49,3 +49,27 @@
 
 /* Mobile nav priority: keep case studies visible without horizontal hunting. */
 @media(max-width:760px){.header .primary-nav>a:nth-child(5){order:-1}}
+
+/* Mobile case category filters: always show all categories, including black-stainless. */
+@media(max-width:620px){
+  .board-filters{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    width:100%;
+    overflow:visible!important;
+  }
+  .board-filters a{
+    display:flex!important;
+    width:100%;
+    min-width:0;
+    justify-content:center;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .board-filters a[href="/cases/category/black-stainless/"]{
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+}
