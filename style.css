@@ -472,3 +472,18 @@ html{scrollbar-gutter:stable}
   margin-top:auto;
   padding-top:17px;
 }
+
+
+/* 2026-09-23 case breadcrumb top alignment */
+@media(min-width:761px){
+  .board-main,
+  .case-detail{
+    padding-top:35px;
+  }
+}
+@media(max-width:760px){
+  .board-main,
+  .case-detail{
+    padding-top:24px;
+  }
+}
