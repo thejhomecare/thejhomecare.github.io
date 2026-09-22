@@ -248,3 +248,8 @@
   .home-page .header .primary-nav{gap:18px}
   .home-page .header .primary-nav>a{font-size:.78rem}
 }
+
+/* Mobile nav order consistency: keep the same link order on every page. */
+@media(max-width:760px){
+  .header .primary-nav>a:nth-child(5){order:initial!important}
+}
