@@ -135,3 +135,24 @@
   .home-page .hero-home .button{font-size:.78rem}
   .home-page .hero-trust strong{font-size:.72rem}
 }
+
+/* Subpage tightening: pricing, services photos, materials first-content position. */
+.pricing-page .board-heading{padding-top:34px;padding-bottom:18px}
+.pricing-page #prices.section{padding-top:28px}
+.pricing-page #prices .section-heading{margin-bottom:28px}
+.materials-page .board-heading{padding-top:34px;padding-bottom:20px}
+.materials-page #fine-screen.material-section{padding-top:28px}
+.service-guide-grid{gap:26px;padding-bottom:48px}
+.service-guide-grid article{padding-top:0;border-top:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:white}
+.service-guide-grid .service-photo{margin:0;height:220px;overflow:hidden;background:var(--surface)}
+.service-guide-grid .service-photo img{width:100%;height:100%;object-fit:cover}
+.service-guide-grid h2{margin:22px 24px 0;font-size:1.35rem}
+.service-guide-grid p{margin:13px 24px 25px;color:var(--muted);line-height:1.75}
+@media(max-width:760px){
+  .pricing-page .board-heading{padding-top:28px;padding-bottom:10px}
+  .pricing-page #prices.section{padding-top:20px}
+  .materials-page .board-heading{padding-top:28px;padding-bottom:12px}
+  .materials-page #fine-screen.material-section{padding-top:22px}
+  .service-guide-grid{gap:20px}
+  .service-guide-grid .service-photo{height:200px}
+}
