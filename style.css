@@ -276,3 +276,60 @@
 @media(max-width:390px){
   .home-page .hero-home h1{font-size:2rem}
 }
+
+
+/* 2026-09-23 mobile header unification: home proportions across all pages */
+@media(max-width:760px){
+  .header-inner{
+    min-height:0;
+    flex-wrap:wrap;
+    padding:9px 0 0;
+    gap:8px 12px;
+  }
+  .brand{
+    order:1;
+    gap:8px;
+    font-size:.98rem;
+  }
+  .brand small{display:none}
+  .brand-logo{width:76px;height:35px}
+  .header .primary-nav{
+    order:2;
+    width:100%;
+    margin-left:0;
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:22px;
+    padding:0;
+    align-items:center;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .header .primary-nav::-webkit-scrollbar{display:none}
+  .header .primary-nav>a{
+    display:inline-flex!important;
+    flex-shrink:0;
+    padding:10px 0 12px;
+    border:0;
+    border-bottom:2px solid transparent;
+    border-radius:0;
+    font-size:.82rem;
+  }
+  .header .primary-nav>a:first-child,
+  .header .primary-nav>.nav-contact{
+    display:none!important;
+  }
+  .header .primary-nav>a:nth-child(5){
+    display:inline-flex!important;
+    order:initial!important;
+    padding:10px 0 12px;
+    border-bottom:2px solid transparent;
+    font-size:.82rem;
+  }
+}
+@media(max-width:390px){
+  .brand-logo{width:68px;height:31px}
+  .header .primary-nav{gap:18px}
+  .header .primary-nav>a{font-size:.78rem}
+}
