@@ -333,3 +333,100 @@
   .header .primary-nav{gap:18px}
   .header .primary-nav>a{font-size:.78rem}
 }
+
+
+/* 2026-09-23 definitive header + subpage top spacing alignment */
+/* Desktop: use the home header height as the site-wide standard. */
+.header-inner{min-height:80px}
+
+/* Pricing / services / materials start at the same position as the cases board. */
+.pricing-page main#main,
+.services-page main#main,
+.materials-page main#main{padding-top:35px}
+
+@media(max-width:760px){
+  /* One mobile header layout for every page. */
+  .header-inner{
+    position:relative;
+    min-height:0;
+    flex-wrap:wrap;
+    padding:9px 0 0;
+    gap:8px 12px;
+  }
+  .brand{
+    order:1;
+    gap:8px;
+    font-size:.98rem;
+  }
+  .brand small{display:none}
+  .brand-logo{width:76px;height:35px}
+
+  /* The home-only duplicate button is replaced by the existing nav contact link. */
+  .home-mobile-contact{display:none!important}
+
+  .header .primary-nav{
+    order:2;
+    width:100%;
+    margin-left:0;
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:22px;
+    padding:0;
+    align-items:center;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .header .primary-nav::-webkit-scrollbar{display:none}
+  .header .primary-nav>a{
+    display:inline-flex!important;
+    flex-shrink:0;
+    padding:10px 0 12px;
+    border:0;
+    border-bottom:2px solid transparent;
+    border-radius:0;
+    font-size:.82rem;
+  }
+  .header .primary-nav>a:first-child{display:none!important}
+  .header .primary-nav>a:nth-child(5){
+    display:inline-flex!important;
+    order:initial!important;
+  }
+
+  /* Same top-right consultation button on home and all subpages. */
+  .header .primary-nav>.nav-contact{
+    display:inline-flex!important;
+    position:absolute;
+    top:9px;
+    right:0;
+    width:auto;
+    margin:0;
+    padding:9px 11px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:white;
+    color:var(--ink);
+    font-size:.8rem;
+    font-weight:700;
+    line-height:1.2;
+    white-space:nowrap;
+  }
+
+  /* Match the clean spacing used by the case-list page. */
+  .pricing-page main#main,
+  .services-page main#main,
+  .materials-page main#main{padding-top:24px}
+}
+
+@media(max-width:390px){
+  .brand-logo{width:68px;height:31px}
+  .header .primary-nav{gap:18px}
+  .header .primary-nav>a{font-size:.78rem}
+  .header .primary-nav>.nav-contact{
+    top:8px;
+    padding:8px 9px;
+    font-size:.76rem;
+  }
+}
