@@ -367,3 +367,108 @@
 
   .home-page .hero-home h1{font-size:2rem}
 }
+
+
+/* 2026-09-23 final cross-page visual consistency */
+/* Keep page width stable while navigating between short and long pages on desktop. */
+html{scrollbar-gutter:stable}
+
+/* One intro rhythm for pricing, services, materials and all case boards. */
+.pricing-page .board-heading,
+.services-page .board-heading,
+.materials-page .board-heading,
+.board-main .board-heading{
+  box-sizing:border-box;
+}
+
+@media(min-width:761px){
+  .pricing-page main#main,
+  .services-page main#main,
+  .materials-page main#main,
+  .board-main{
+    padding-top:35px;
+  }
+
+  .pricing-page .board-heading,
+  .services-page .board-heading,
+  .materials-page .board-heading,
+  .board-main .board-heading{
+    padding-top:48px;
+    padding-bottom:24px;
+  }
+
+  .pricing-page .board-heading h1,
+  .services-page .board-heading h1,
+  .materials-page .board-heading h1,
+  .board-main .board-heading h1{
+    font-size:clamp(2rem,3.8vw,3.15rem);
+    line-height:1.3;
+  }
+
+  .pricing-page .board-heading>p:last-child,
+  .services-page .board-heading>p:last-child,
+  .materials-page .board-heading>p:last-child,
+  .board-main .board-heading>p:last-child{
+    margin-top:19px;
+    font-size:1rem;
+    line-height:1.75;
+  }
+}
+
+@media(max-width:760px){
+  .pricing-page main#main,
+  .services-page main#main,
+  .materials-page main#main,
+  .board-main{
+    padding-top:24px;
+  }
+
+  .pricing-page .board-heading,
+  .services-page .board-heading,
+  .materials-page .board-heading,
+  .board-main .board-heading{
+    padding-top:34px;
+    padding-bottom:14px;
+  }
+
+  .pricing-page .board-heading h1,
+  .services-page .board-heading h1,
+  .materials-page .board-heading h1,
+  .board-main .board-heading h1{
+    font-size:2rem;
+    line-height:1.3;
+  }
+
+  .pricing-page .board-heading>p:last-child,
+  .services-page .board-heading>p:last-child,
+  .materials-page .board-heading>p:last-child,
+  .board-main .board-heading>p:last-child{
+    margin-top:16px;
+    font-size:.9375rem;
+    line-height:1.8;
+  }
+}
+
+/* Home featured cases: equal visual frame and aligned card bottoms. */
+.home-page .case-grid{align-items:stretch}
+.home-page .case-card{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  min-width:0;
+}
+.home-page .case-image-wrap{
+  width:100%;
+  aspect-ratio:3/4;
+  background:#e0e7ea;
+}
+.home-page .case-image{
+  width:100%;
+  height:100%;
+  aspect-ratio:auto;
+  object-fit:cover;
+}
+.home-page .case-link{
+  margin-top:auto;
+  padding-top:17px;
+}
