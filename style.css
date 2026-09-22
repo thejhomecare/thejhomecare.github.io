@@ -109,7 +109,7 @@
   .home-page .brand-logo{width:76px;height:35px}
   .home-page .header .primary-nav{width:auto;overflow:visible;margin-left:auto;gap:8px;padding:0}
   .home-page .header .primary-nav>a{display:none!important}
-  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important;order:initial;padding:9px 10px;border:0;font-size:.8rem}
+  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important;order:initial}
   .home-page .header .primary-nav>.nav-contact{display:inline-flex!important;padding:9px 10px;border:1px solid var(--line);font-size:.8rem}
   .home-page .hero-home{min-height:610px}
   .home-page .hero-home-bg{object-position:58% 50%}
@@ -130,7 +130,7 @@
 }
 @media(max-width:390px){
   .home-page .brand-logo{width:68px;height:31px}
-  .home-page .header .primary-nav>a:nth-child(5){display:none!important}
+  .home-page .header .primary-nav>a:nth-child(5){display:inline-flex!important}
   .home-page .hero-home h1{font-size:2.18rem}
   .home-page .hero-home .button{font-size:.78rem}
   .home-page .hero-trust strong{font-size:.72rem}
