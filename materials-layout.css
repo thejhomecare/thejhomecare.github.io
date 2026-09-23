@@ -1,0 +1,4 @@
+/* Materials: show the three black-stainless specifications in one row on desktop. */
+@media (min-width: 901px){
+  .materials-page #black-stainless .material-options{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
