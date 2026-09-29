@@ -1,0 +1,50 @@
+name: One-time phase 2 content inspection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/phase2-content-inspect-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect detail intros and FAQ questions
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re, html
+
+          skip_prefixes = ('cases/category/', 'cases/page/')
+          files=[]
+          for p in sorted(Path('cases').glob('*/index.html')):
+              rel=p.as_posix()
+              if rel == 'cases/index.html' or rel.startswith(skip_prefixes):
+                  continue
+              text=p.read_text(encoding='utf-8')
+              if 'class="case-detail"' not in text:
+                  continue
+              files.append(p)
+
+          print('DETAIL_COUNT', len(files))
+          for p in files:
+              text=p.read_text(encoding='utf-8')
+              h1=re.search(r'<h1>(.*?)</h1>', text, re.S)
+              head=re.search(r'<div class="detail-heading">.*?<h1>.*?</h1><p>(.*?)</p></div>', text, re.S)
+              faq=re.search(r'<section class="case-faq">(.*?)</section>', text, re.S)
+              qs=re.findall(r'<h3>(.*?)</h3>', faq.group(1), re.S) if faq else []
+              clean=lambda s: re.sub(r'<[^>]+>','',html.unescape(s or '')).strip()
+              print('\nPATH', p.as_posix())
+              print('H1', clean(h1.group(1) if h1 else ''))
+              print('INTRO', clean(head.group(1) if head else ''))
+              print('INTRO_LEN', len(clean(head.group(1) if head else '')))
+              print('FAQ_COUNT', len(qs))
+              for q in qs:
+                  print('Q', clean(q))
+          PY
