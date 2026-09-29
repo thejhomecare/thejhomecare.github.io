@@ -4,7 +4,7 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   const path=location.pathname.endsWith('/')?location.pathname:location.pathname+'/';
   if(!path.startsWith('/cases/'))return;
 
-  const counts={total:33,fine:9,black:14,entrance:6,pj:3,louver:1};
+  const counts={total:34,fine:10,black:14,entrance:6,pj:3,louver:1};
   const setCount=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=String(value)};
 
   setCount('.board-switch a span',counts.total);
@@ -31,6 +31,12 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   if(path==='/cases/'||path==='/cases/category/entrance/'){
     const list=document.querySelector('.board-list');
     if(list&&!list.querySelector('[data-case-id="N13"]'))list.insertAdjacentHTML('afterbegin',n13Markup);
+  }
+
+  const n14Markup=`<article class="board-row" data-case-id="N14"><a class="board-post" href="/cases/yulha-seohui-starhills-fine-screen/"><span class="post-number" aria-hidden="true">${path==='/cases/category/fine/'?'10':'34'}</span><div class="post-copy"><p class="post-meta"><span class="post-category">미세방충망</span><span>김해 율하 · 서희스타힐스 · 망 찢어짐·모헤어·롤러 정비</span></p><h2>김해 율하 서희스타힐스 미세방충망 교체</h2><p class="post-summary">찢어진 기존 알루미늄망을 미세방충망으로 교체하고, 눌리고 해진 모헤어와 작동이 좋지 않은 롤러까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/yulha-seohui-starhills-fine-screen/gimhae-yulha-seohui-starhills-fine-screen-hero.webp" alt="김해 율하 서희스타힐스 미세방충망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>`;
+  if(path==='/cases/'||path==='/cases/category/fine/'){
+    const list=document.querySelector('.board-list');
+    if(list&&!list.querySelector('[data-case-id="N14"]'))list.insertAdjacentHTML('afterbegin',n14Markup);
   }
 
   const strong=document.querySelector('.board-count strong');
