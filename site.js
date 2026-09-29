@@ -4,7 +4,7 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   const path=location.pathname.endsWith('/')?location.pathname:location.pathname+'/';
   if(!path.startsWith('/cases/'))return;
 
-  const counts={total:35,fine:10,black:15,entrance:6,pj:3,louver:1};
+  const counts={total:36,fine:10,black:16,entrance:6,pj:3,louver:1};
   const setCount=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=String(value)};
 
   setCount('.board-switch a span',counts.total);
@@ -43,6 +43,12 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   if(path==='/cases/'||path==='/cases/category/black-stainless/'){
     const list=document.querySelector('.board-list');
     if(list&&!list.querySelector('[data-case-id="N15"]'))list.insertAdjacentHTML('afterbegin',n15Markup);
+  }
+
+  const n16Markup=`<article class="board-row" data-case-id="N16"><a class="board-post" href="/cases/hwamyeong-sujeong-riverside-black-stainless/"><span class="post-number" aria-hidden="true">${path==='/cases/category/black-stainless/'?'16':'36'}</span><div class="post-copy"><p class="post-meta"><span class="post-category">블랙스텐망</span><span>부산 화명동 · 수정강변타운 · 대형 방충망·모헤어 정비</span></p><h2>부산 화명동 수정강변타운 블랙스텐망 교체</h2><p class="post-summary">매미로 손상된 베란다 대형 방충망을 미세 블랙스텐망으로 교체하고 사라진 모헤어까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/busan/hwamyeong-sujeong-riverside-black-stainless/busan-hwamyeong-sujeong-riverside-black-stainless-hero.webp" alt="부산 화명동 수정강변타운 블랙스텐망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>`;
+  if(path==='/cases/'||path==='/cases/category/black-stainless/'){
+    const list=document.querySelector('.board-list');
+    if(list&&!list.querySelector('[data-case-id="N16"]'))list.insertAdjacentHTML('afterbegin',n16Markup);
   }
 
   const strong=document.querySelector('.board-count strong');
