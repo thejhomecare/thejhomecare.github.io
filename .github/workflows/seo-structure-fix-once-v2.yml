@@ -1,0 +1,220 @@
+name: One-time SEO structure cleanup v2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/seo-structure-fix-once-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply approved structure fixes
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          COUNTS = {"total": 36, "fine": 11, "black": 16, "entrance": 6, "pj": 3, "louver": 1}
+
+          def load(rel):
+              p = Path(rel)
+              if not p.exists():
+                  raise SystemExit(f"missing file: {rel}")
+              return p, p.read_text(encoding="utf-8")
+
+          def save(rel, text):
+              Path(rel).write_text(text, encoding="utf-8")
+
+          def replace_once(text, old, new, rel):
+              if old not in text:
+                  raise SystemExit(f"marker not found in {rel}: {old[:100]}")
+              return text.replace(old, new, 1)
+
+          def update_counts(rel):
+              _, text = load(rel)
+              replacements = [
+                  (r'(<a href="/cases/"[^>]*>방충망 시공사례<span>)\d+(</span>)', COUNTS["total"]),
+                  (r'(<a href="/cases/"[^>]*>전체 <span>)\d+(</span>)', COUNTS["total"]),
+                  (r'(<a href="/cases/category/fine/"[^>]*>미세방충망 <span>)\d+(</span>)', COUNTS["fine"]),
+                  (r'(<a href="/cases/category/black-stainless/"[^>]*>블랙스텐망 <span>)\d+(</span>)', COUNTS["black"]),
+                  (r'(<a href="/cases/category/entrance/"[^>]*>현관방충망 <span>)\d+(</span>)', COUNTS["entrance"]),
+                  (r'(<a href="/cases/category/pj-roll/"[^>]*>PJ롤방충망 <span>)\d+(</span>)', COUNTS["pj"]),
+                  (r'(<a href="/cases/category/louver/"[^>]*>루버방충망 <span>)\d+(</span>)', COUNTS["louver"]),
+              ]
+              for pat, value in replacements:
+                  text = re.sub(pat, lambda m, v=value: m.group(1) + str(v) + m.group(2), text)
+              count_patterns = {
+                  "cases/index.html": ("전체 시공사례", COUNTS["total"]),
+                  "cases/page/2/index.html": ("전체 시공사례", COUNTS["total"]),
+                  "cases/category/fine/index.html": ("미세방충망", COUNTS["fine"]),
+                  "cases/category/black-stainless/index.html": ("블랙스텐망", COUNTS["black"]),
+                  "cases/category/entrance/index.html": ("현관방충망", COUNTS["entrance"]),
+                  "cases/category/pj-roll/index.html": ("PJ롤방충망", COUNTS["pj"]),
+                  "cases/category/louver/index.html": ("루버방충망", COUNTS["louver"]),
+              }
+              label, value = count_patterns[rel]
+              text = re.sub(rf'(<p>{re.escape(label)} <strong>)\d+건(</strong>)', lambda m: m.group(1) + f"{value}건" + m.group(2), text)
+              save(rel, text)
+
+          def board_region(text):
+              start = text.index('<div class="board-list">')
+              candidates = [x for x in (text.find('</div><nav class="board-pagination"', start), text.find('</div><div class="board-footer"', start)) if x != -1]
+              if not candidates:
+                  raise SystemExit("board-list end marker not found")
+              return start, min(candidates)
+
+          def renumber(rel, start_number, expected_cards, pad2=False):
+              _, text = load(rel)
+              start, end = board_region(text)
+              seg = text[start:end]
+              card_count = seg.count('<article class="board-row"')
+              if card_count != expected_cards:
+                  raise SystemExit(f"{rel}: expected {expected_cards} cards, got {card_count}")
+              rx = re.compile(r'(<span class="post-number" aria-hidden="true">)(\d+)(</span>)')
+              idx = 0
+              def repl(m):
+                  nonlocal idx
+                  value = start_number - idx
+                  idx += 1
+                  return m.group(1) + (f"{value:02d}" if pad2 else str(value)) + m.group(3)
+              seg2 = rx.sub(repl, seg)
+              if idx != expected_cards:
+                  raise SystemExit(f"{rel}: expected {expected_cards} post numbers, got {idx}")
+              save(rel, text[:start] + seg2 + text[end:])
+
+          def prepend_board_cards(rel, cards, guard):
+              _, text = load(rel)
+              if guard in text:
+                  return
+              marker = '<div class="board-list">'
+              text = replace_once(text, marker, marker + '\n' + '\n'.join(cards) + '\n', rel)
+              save(rel, text)
+
+          n09 = '<article class="board-row" data-case-id="N09"><a class="board-post" href="/cases/buwon-store-entrance-roll-screen/"><span class="post-number" aria-hidden="true">31</span><div class="post-copy"><p class="post-meta"><span class="post-category">현관방충망</span><span>김해 부원동 · 상가 · 실버 현관롤방충망</span></p><h2>김해 부원동 상가 현관롤방충망 시공</h2><p class="post-summary">상가 출입구를 실측하고 문고리·도어클로저 등 주변 구조의 간섭 여부를 확인한 뒤 실버 프레임 현관롤방충망을 맞춤 설치.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/buwon-store-entrance-roll-screen/gimhae-buwon-store-entrance-roll-screen-hero.webp" alt="김해 부원동 상가 현관롤방충망 설치 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n12 = '<article class="board-row" data-case-id="N12"><a class="board-post" href="/cases/gusan-ijin-castle2-black-stainless/"><span class="post-number" aria-hidden="true">32</span><div class="post-copy"><p class="post-meta"><span class="post-category">블랙스텐망</span><span>김해 구산동 · 이진캐스빌2단지 · 망 찢어짐·노후 모헤어</span></p><h2>김해 구산동 이진캐스빌2단지 블랙스텐망 교체</h2><p class="post-summary">찢어지고 보수 흔적이 있던 기존 방충망을 0.14/28메쉬 블랙스텐망으로 교체하고 노후 모헤어와 코너 부분까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/gusan-ijin-castle2-black-stainless/gimhae-gusan-ijin-castle2-black-stainless-hero.webp" alt="김해 구산동 이진캐스빌2단지 블랙스텐망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n13 = '<article class="board-row" data-case-id="N13"><a class="board-post" href="/cases/naedong-entrance-roll-replacement/"><span class="post-number" aria-hidden="true">33</span><div class="post-copy"><p class="post-meta"><span class="post-category">현관방충망</span><span>김해 내동 · 주택 · 망 찢어짐·레일 이탈</span></p><h2>김해 내동 주택 현관롤방충망 교체</h2><p class="post-summary">망이 찢어지고 레일이 이탈한 무턱형 제품을 철거하고 화이트 프레임·미세촘촘망 현관롤방충망으로 교체, 주변 틈새까지 마감.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/naedong-entrance-roll-replacement/gimhae-naedong-entrance-roll-replacement-hero.webp" alt="김해 내동 주택 화이트 현관롤방충망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n14 = '<article class="board-row" data-case-id="N14"><a class="board-post" href="/cases/yulha-seohui-starhills-fine-screen/"><span class="post-number" aria-hidden="true">34</span><div class="post-copy"><p class="post-meta"><span class="post-category">미세방충망</span><span>김해 율하 · 서희스타힐스 · 망 찢어짐·모헤어·롤러 정비</span></p><h2>김해 율하 서희스타힐스 미세방충망 교체</h2><p class="post-summary">찢어진 기존 알루미늄망을 미세방충망으로 교체하고, 눌리고 해진 모헤어와 작동이 좋지 않은 롤러까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/yulha-seohui-starhills-fine-screen/gimhae-yulha-seohui-starhills-fine-screen-hero.webp" alt="김해 율하 서희스타힐스 미세방충망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n15 = '<article class="board-row" data-case-id="N15"><a class="board-post" href="/cases/jangyu-villa-black-stainless/"><span class="post-number" aria-hidden="true">35</span><div class="post-copy"><p class="post-meta"><span class="post-category">블랙스텐망</span><span>김해 장유 · 빌라 · 보수테이프 망·노후 모헤어</span></p><h2>김해 장유 빌라 미세 블랙스텐망 시공</h2><p class="post-summary">테이프로 임시 보수해 사용하던 기존 망을 0.14/28메쉬 미세 블랙스텐망으로 교체하고 삭은 모헤어까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/jangyu-villa-black-stainless/gimhae-jangyu-villa-black-stainless-hero.webp" alt="김해 장유 빌라 미세 블랙스텐망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n16 = '<article class="board-row" data-case-id="N16"><a class="board-post" href="/cases/hwamyeong-sujeong-riverside-black-stainless/"><span class="post-number" aria-hidden="true">36</span><div class="post-copy"><p class="post-meta"><span class="post-category">블랙스텐망</span><span>부산 화명동 · 수정강변타운 · 대형 방충망·모헤어 정비</span></p><h2>부산 화명동 수정강변타운 블랙스텐망 교체</h2><p class="post-summary">매미로 손상된 베란다 대형 방충망을 미세 블랙스텐망으로 교체하고 사라진 모헤어까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/busan/hwamyeong-sujeong-riverside-black-stainless/busan-hwamyeong-sujeong-riverside-black-stainless-hero.webp" alt="부산 화명동 수정강변타운 블랙스텐망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>'
+          n23 = '<article class="board-row" data-case-id="N23"><a class="board-post" href="/cases/naedong-pvc-frame/"><span class="post-number" aria-hidden="true">02</span><div class="post-copy"><p class="post-meta"><span class="post-category">미세방충망 · 방충망 틀 제작</span><span>김해 내동 · 빌라 · 미세촘촘망</span></p><h2>김해 내동 빌라 하이샤시 방충망 틀 맞춤 제작</h2><p class="post-summary">파손된 기존 틀을 현장 실측 후 공장 맞춤 제작하고, 미세촘촘망 시공과 설치까지.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/naedong-pvc-frame/hero.jpg" alt="김해 내동 빌라 하이샤시 방충망 틀 설치 완료" width="1536" height="2048" loading="lazy"></a></article>'
+
+          prepend_board_cards("cases/index.html", [n16, n15, n14, n13, n12, n09], 'data-case-id="N16"')
+          renumber("cases/index.html", 36, 25, False)
+
+          prepend_board_cards("cases/category/black-stainless/index.html", [n16, n15, n12], 'data-case-id="N16"')
+          renumber("cases/category/black-stainless/index.html", 16, 16, True)
+
+          prepend_board_cards("cases/category/entrance/index.html", [n13, n09], 'data-case-id="N13"')
+          renumber("cases/category/entrance/index.html", 6, 6, True)
+
+          rel = "cases/category/fine/index.html"
+          _, text = load(rel)
+          if 'data-case-id="N14"' not in text:
+              marker = '<div class="board-list">'
+              text = replace_once(text, marker, marker + '\n' + n14 + '\n', rel)
+          if 'data-case-id="N23"' not in text:
+              marker = '<article class="board-row"><a class="board-post" href="/cases/jinyeong-fine-screen/">'
+              text = replace_once(text, marker, n23 + '\n' + marker, rel)
+          save(rel, text)
+          renumber(rel, 11, 11, True)
+
+          listing_pages = [
+              "cases/index.html", "cases/page/2/index.html",
+              "cases/category/fine/index.html", "cases/category/black-stainless/index.html",
+              "cases/category/entrance/index.html", "cases/category/pj-roll/index.html",
+              "cases/category/louver/index.html",
+          ]
+          for rel in listing_pages:
+              update_counts(rel)
+
+          rel = "cases/jinyeong-fine-screen/index.html"
+          _, text = load(rel)
+          text = text.replace("중흥S클래스 3단지", "중흥S클래스리버티3단지")
+          text = text.replace("중흥S클래스3단지", "중흥S클래스리버티3단지")
+          save(rel, text)
+          for rel in ("cases/page/2/index.html", "cases/category/fine/index.html"):
+              _, text = load(rel)
+              text = text.replace("중흥S클래스 3단지", "중흥S클래스리버티3단지")
+              text = text.replace("중흥S클래스3단지", "중흥S클래스리버티3단지")
+              save(rel, text)
+
+          rel = "cases/gimhae-gusan-fine-water-repellent/index.html"
+          _, text = load(rel)
+          text = text.replace("원문 기준 모노필라멘트 소재를", "모노필라멘트 소재를")
+          save(rel, text)
+
+          rel = "cases/samgye-office-pj-roll/index.html"
+          _, text = load(rel)
+          text = text.replace("원문 기준 좌우 방식은", "좌우 방식은")
+          text = text.replace("더제이홈케어는 원문 기준 현장 실측 방문에", "더제이홈케어는 현장 실측 방문에")
+          save(rel, text)
+
+          og_targets = [
+              "cases/naedong-black-stainless/index.html",
+              "cases/gimhae-entrance/index.html",
+              "cases/gusan-ijin-castle1-black-stainless/index.html",
+              "cases/jangyu-wolsan12-black-stainless/index.html",
+              "cases/yulha-jungang-heights-pj-roll/index.html",
+              "cases/oedong-hankuk1-entrance/index.html",
+              "cases/naedong-pvc-frame/index.html",
+              "cases/jangyu-wolsan3-cat-screen/index.html",
+          ]
+          for rel in og_targets:
+              _, text = load(rel)
+              if 'property="og:image"' in text:
+                  continue
+              m = re.search(r'<figure class="detail-photo"><img src="([^"]+)"', text)
+              if not m:
+                  raise SystemExit(f"hero image not found for OG: {rel}")
+              src = m.group(1)
+              url = src if src.startswith("http") else "https://thejhomecare.com" + src
+              marker = '<meta property="og:site_name" content="더제이홈케어">'
+              text = replace_once(text, marker, marker + f'\n<meta property="og:image" content="{url}">', rel)
+              save(rel, text)
+
+          Path("site.js").write_text("const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Date().getFullYear();\n", encoding="utf-8")
+
+          checks = {
+              "cases/index.html": ['data-case-id="N16"', 'data-case-id="N09"', '전체 <span>36</span>', '미세방충망 <span>11</span>', '블랙스텐망 <span>16</span>'],
+              "cases/category/fine/index.html": ['data-case-id="N14"', 'data-case-id="N23"', '미세방충망 <strong>11건</strong>', '중흥S클래스리버티3단지'],
+              "cases/category/black-stainless/index.html": ['data-case-id="N16"', 'data-case-id="N15"', 'data-case-id="N12"', '블랙스텐망 <strong>16건</strong>'],
+              "cases/category/entrance/index.html": ['data-case-id="N13"', 'data-case-id="N09"', '현관방충망 <strong>6건</strong>'],
+              "cases/jinyeong-fine-screen/index.html": ['중흥S클래스리버티3단지'],
+          }
+          for rel, markers in checks.items():
+              text = Path(rel).read_text(encoding="utf-8")
+              for marker in markers:
+                  if marker not in text:
+                      raise SystemExit(f"verification failed: {marker} not in {rel}")
+          for rel in og_targets:
+              if 'property="og:image"' not in Path(rel).read_text(encoding="utf-8"):
+                  raise SystemExit(f"OG verification failed: {rel}")
+          if "원문 기준" in Path("cases/gimhae-gusan-fine-water-repellent/index.html").read_text(encoding="utf-8"):
+              raise SystemExit("S05 editorial phrase remains")
+          if "원문 기준" in Path("cases/samgye-office-pj-roll/index.html").read_text(encoding="utf-8"):
+              raise SystemExit("N42 editorial phrase remains")
+          if "insertAdjacentHTML" in Path("site.js").read_text(encoding="utf-8"):
+              raise SystemExit("site.js dynamic card insertion remains")
+          print("Approved phase-1 SEO structure fixes verified.")
+          PY
+      - name: Commit fixes
+        shell: bash
+        run: |
+          git config user.name "thejhomecare"
+          git config user.email "thej2homecare@gmail.com"
+          git add cases site.js
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Apply phase 1 SEO structure fixes"
+          git push origin HEAD:main
