@@ -1,0 +1,226 @@
+name: One-time phase 2 content cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/phase2-content-cleanup-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply approved phase 2 content cleanup
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          detail_files=[]
+          for p in sorted(Path('cases').glob('*/index.html')):
+              text=p.read_text(encoding='utf-8')
+              if 'class="case-detail"' in text:
+                  detail_files.append(p)
+          if len(detail_files) != 36:
+              raise SystemExit(f'expected 36 detail pages, got {len(detail_files)}')
+
+          original_h1={}
+          original_title={}
+          for p in detail_files:
+              text=p.read_text(encoding='utf-8')
+              mh=re.search(r'<h1>(.*?)</h1>', text, re.S)
+              mt=re.search(r'<title>(.*?)</title>', text, re.S)
+              original_h1[p.as_posix()]=mh.group(1) if mh else ''
+              original_title[p.as_posix()]=mt.group(1) if mt else ''
+
+          intro_map={
+            'cases/buwon-store-entrance-roll-screen/index.html':'상가 출입구의 문고리와 도어클로저 간섭을 확인해 실버 현관롤방충망을 맞춤 설치했습니다.',
+            'cases/gusan-church-black-stainless-frame/index.html':'방충망틀이 없던 외부 창에 블랙 알루미늄 틀을 제작하고 블랙스텐망을 시공했습니다.',
+            'cases/gusan-house-security-bar-fine-water-repellent/index.html':'방범창을 철거하지 않고 창문을 탈거해 찢어진 망을 미세발수망으로 교체했습니다.',
+            'cases/gusan-ijin-castle1-black-stainless/index.html':'구멍 난 기존 망을 0.14/28메쉬 블랙스텐망으로 교체하고 털이 빠지던 모헤어를 함께 정비했습니다.',
+            'cases/imho-hyundai2-fine-screen/index.html':'공원과 수목이 가까운 세대에서 올이 풀린 방충망과 노후 모헤어를 함께 교체했습니다.',
+            'cases/jangyu-wolsan12-black-stainless/index.html':'작은 구멍이 생긴 기존 알루미늄망을 0.14/28메쉬 블랙스텐망으로 교체하고 노후 모헤어와 손상된 롤러를 함께 정비했습니다.',
+            'cases/jangyu-wolsan3-cat-screen/index.html':'반려묘가 자주 이용하는 창 2곳의 노후 알루미늄망을 0.18/24메쉬 블랙스텐망으로 교체하고 모헤어와 롤러를 함께 정비했습니다.',
+            'cases/jinyeong-fine-screen/index.html':'김해 진영 중흥S클래스리버티3단지에서 미세방충망과 모헤어를 함께 교체했습니다.',
+            'cases/juchon-epyeonhansesang-premier-fine-screen/index.html':'신축 세대의 손상된 망을 교체하며 특대 거실창의 프레임이 휘지 않도록 장력을 조절했습니다.',
+            'cases/naedong-hanjin-pvc-frame-black-stainless/index.html':'레일에서 이탈해 파손된 방충망틀을 PVC 틀로 새로 제작하고 블랙스텐망을 시공했습니다.',
+            'cases/naedong-officetel-pj-roll/index.html':'벽면 간섭이 있는 창 1곳을 제외하고 프로젝트창 3곳에 PJ롤방충망을 설치했습니다.',
+            'cases/naedong-pvc-frame/index.html':'파손된 하이샤시 방충망틀을 새로 제작하고 미세촘촘망을 시공했습니다.',
+            'cases/oedong-hankuk1-entrance/index.html':'상부 도어클로저 간섭을 확인해 설치 방법을 조정하고 블랙 프레임 현관롤방충망을 시공한 뒤 주변 틈새까지 마감했습니다.',
+            'cases/sambang-international-shopping-town-entrance/index.html':'도어클로저 커버 적용 시 출입 높이가 낮아지는 구조를 확인하고 올블랙 미세촘촘망으로 시공했습니다.',
+            'cases/samgye-guji-village3-prugio-black-stainless/index.html':'보수테이프를 덧댄 부식된 방충망을 블랙스텐망으로 교체하고 녹슨 롤러를 함께 정비했습니다.',
+            'cases/samgye-guji-village3-prugio-fine-screen/index.html':'보수테이프로 사용하던 노후 방충망 4개를 미세방충망으로 교체하고 개폐 상태를 점검했습니다.',
+            'cases/yulha-jungang-heights-pj-roll/index.html':'고정 방식을 확인하며 기존 PJ롤방충망을 탈거한 뒤 주문 제작한 새 제품으로 교체했습니다.',
+          }
+
+          faq_map={
+            'cases/busan-ecodelta-black-stainless/index.html':[
+              ('이번 현장에서 블랙스텐망 교체와 함께 어떤 틈새를 보완했나요?','0.14/28메쉬 블랙스텐망으로 교체하면서 코너와 물구멍 등 벌레가 들어올 수 있는 틈을 함께 확인해 보완했습니다.')],
+            'cases/busan-ecodelta-black-stainless-view/index.html':[
+              ('입주 전에 기존 방충망을 교체한 이유는 무엇인가요?','기존 알루미늄망의 시야와 마감 상태가 아쉬워 입주 전에 0.14 블랙스텐망으로 교체했습니다.')],
+            'cases/buwon-store-entrance-roll-screen/index.html':[
+              ('이 상가 출입구에서는 설치 전에 어떤 간섭 요소를 확인했나요?','문고리와 도어클로저가 설치 위치와 간섭하는지 확인한 뒤 출입구 치수에 맞춰 실버 현관롤방충망을 설치했습니다.')],
+            'cases/changnyeong-namji-black-stainless/index.html':[
+              ('이번 전원주택에서는 창문 방충망과 현관방충망을 어떻게 함께 작업했나요?','노후된 창문 방충망을 0.14/28메쉬 블랙스텐망으로 전체 교체하고 모헤어·롤러와 현관롤방충망까지 함께 정비했습니다.')],
+            'cases/gimhae-entrance/index.html':[
+              ('이번 현장에서는 도어클로저 간섭을 어떻게 조정했나요?','도어클로저를 제거하지 않고 짧은 브라켓으로 교체해 현관롤방충망과의 간섭을 줄였습니다.')],
+            'cases/gimhae-gusan-fine-water-repellent/index.html':[
+              ('공원과 가까운 이 현장에서는 왜 촘촘한 망을 선택했나요?','주택 앞 공원에서 작은 벌레 유입이 신경 쓰이는 환경이라 30메쉬 미세발수망을 적용하고 노후 모헤어도 함께 교체했습니다.')],
+            'cases/gusan-church-black-stainless-frame/index.html':[
+              ('방충망틀이 없던 창에는 어떻게 시공했나요?','외부 창을 실측해 블랙 알루미늄 방충망틀을 새로 제작하고 블랙스텐망까지 조립해 설치했습니다.')],
+            'cases/gusan-gwangnam-baekjo-black-stainless/index.html':[
+              ('이번 현장의 기존 알루미늄망은 어떤 상태였나요?','오래 사용한 알루미늄망이 부식되며 찢어지고 구멍이 생긴 상태여서 철거 후 블랙스텐망으로 교체했습니다.')],
+            'cases/gusan-house-security-bar-fine-water-repellent/index.html':[
+              ('방범창을 철거하지 않고 방충망을 어떻게 교체했나요?','방범창은 그대로 두고 창문을 탈거해 찢어진 기존 망을 미세발수망으로 교체했습니다.')],
+            'cases/gusan-ijin-castle1-black-stainless/index.html':[],
+            'cases/gusan-ijin-castle1-fine-screen/index.html':[
+              ('망이 찢어지지 않았는데도 교체한 이유는 무엇인가요?','오래 사용해 기존 망의 오염이 눈에 띄어 미세방충망으로 교체하고 설치 후 마감과 시야를 확인했습니다.')],
+            'cases/gusan-ijin-castle2-black-stainless/index.html':[
+              ('이번 현장에서 코너 부분과 가장자리 틈을 함께 정비한 이유는 무엇인가요?','망을 새로 교체해도 코너와 가장자리 틈이 남으면 작은 벌레가 들어올 수 있어 블랙스텐망 교체와 함께 해당 부분을 확인해 보완했습니다.')],
+            'cases/gusan-ildong-mirage-fine-screen/index.html':[
+              ('오염된 프레임은 방충망 교체 때 어떻게 정리했나요?','기존 알루미늄망을 제거한 뒤 프레임 오염을 정리하고 노후 모헤어를 교체한 다음 미세방충망을 시공했습니다.')],
+            'cases/hwamyeong-sujeong-riverside-black-stainless/index.html':[
+              ('대형 방충망이 엘리베이터에 들어가지 않으면 어떻게 하나요?','이번 현장은 베란다 방충망틀이 커서 엘리베이터에 실리지 않아 계단으로 이동해 작업했습니다.')],
+            'cases/imho-hyundai2-fine-screen/index.html':[
+              ('샷시는 비교적 새것인데 방충망을 교체한 이유는 무엇인가요?','샤시 자체는 비교적 새 제품이었지만 방충망 곳곳에서 올 풀림이 확인돼 미세방충망으로 교체했습니다.')],
+            'cases/jangyu-villa-black-stainless/index.html':[
+              ('테이프로 보수한 방충망은 계속 사용해도 되나요?','보수테이프의 접착력이 약해지면 손상 부위가 다시 벌어질 수 있어 이번 현장에서는 망 전체를 0.14/28메쉬 블랙스텐망으로 교체했습니다.')],
+            'cases/jangyu-wolsan12-black-stainless/index.html':[
+              ('이번 현장에서 모헤어와 롤러를 함께 교체한 이유는 무엇인가요?','기존 모헤어는 털이 빠져 제 기능을 하기 어려웠고 롤러도 손상돼 블랙스텐망 교체와 함께 정비했습니다.'),
+              ('이번 현장에서는 물구멍을 어떻게 보완했나요?','방충망과 부속 정비 후 창틀의 물구멍에는 벌레 유입을 줄이기 위한 전용 스티커를 적용했습니다.')],
+            'cases/jangyu-wolsan3-cat-screen/index.html':[
+              ('반려묘가 자주 이용하는 창 2곳만 시공한 이유는 무엇인가요?','반려묘가 자주 이용하는 창 2곳을 시공 범위로 정해 0.18/24메쉬 블랙스텐망으로 교체하고 모헤어와 롤러도 함께 정비했습니다.')],
+            'cases/jinyeong-fine-screen/index.html':[],
+            'cases/juchon-epyeonhansesang-premier-fine-screen/index.html':[
+              ('특대 거실 방충망은 왜 장력 조절이 중요한가요?','큰 방충망은 망을 너무 강하게 당기면 프레임에 부담이 갈 수 있어 휘어짐을 막도록 장력을 조절하며 시공했습니다.')],
+            'cases/miryang-black-stainless/index.html':[],
+            'cases/naedong-black-stainless/index.html':[],
+            'cases/naedong-entrance-roll-replacement/index.html':[
+              ('레일이 이탈한 현관방충망은 망만 교체할 수 있나요?','이번 현장은 망이 찢어진 것뿐 아니라 레일까지 이탈해 기존 제품 전체를 철거하고 새 현관롤방충망으로 교체했습니다.'),
+              ('기존 무턱형 현관방충망도 다른 제품으로 교체할 수 있나요?','기존 제품과 현관 구조를 확인한 뒤 이번 현장에서는 무턱형 제품을 철거하고 화이트 프레임 현관롤방충망으로 교체했습니다.')],
+            'cases/naedong-hanjin-pvc-frame-black-stainless/index.html':[
+              ('이번 현장에서 새 틀 제작 전 레일 치수를 다시 확인한 이유는 무엇인가요?','기존 틀이 레일에서 이탈해 추락한 현장이어서 새 PVC 틀이 샤시와 레일에 정확히 맞도록 현장 치수를 다시 확인한 뒤 제작했습니다.')],
+            'cases/naedong-officetel-pj-roll/index.html':[
+              ('프로젝트창 4곳 중 1곳에 PJ롤방충망을 설치하지 않은 이유는 무엇인가요?','한 곳은 벽면 간섭으로 설치 공간이 나오지 않아 제외하고, 장착 가능한 3곳에 맞춤 제작한 PJ롤방충망을 설치했습니다.')],
+            'cases/naedong-pvc-frame/index.html':[
+              ('하이샤시 방충망틀은 현장에서 바로 제작하나요?','하이샤시 PVC 틀은 공장에서 플라스틱 용접 과정을 거쳐 제작하며 보통 약 1~3일의 제작 기간이 필요합니다.'),
+              ('방충망틀이 파손되면 망만 교체할 수 있나요?','망만 손상된 경우에는 기존 틀을 사용할 수 있지만 틀이 휘거나 파손된 경우에는 새 틀 제작이 필요할 수 있습니다.')],
+            'cases/oedong-hankuk1-entrance/index.html':[
+              ('이번 현장에서는 도어클로저 간섭을 어떻게 확인하고 설치했나요?','상부 도어클로저가 설치 위치와 간섭되는 구조를 확인해 현장 조건에 맞게 설치 방법을 조정하고 주변 틈새까지 마감했습니다.')],
+            'cases/oedong-yeongsin-villa-black-stainless/index.html':[
+              ('이번 현장에서 창문을 닫아도 벌레가 들어온 원인은 무엇이었나요?','망 손상뿐 아니라 노후 모헤어와 방충망틀 변형으로 틈이 생겨 있어 블랙스텐망 교체와 함께 틈을 보수했습니다.')],
+            'cases/sambang-international-shopping-town-entrance/index.html':[
+              ('이번 현장에서 도어클로저 커버를 사용하지 않은 이유는 무엇인가요?','커버를 적용하면 출입 높이가 낮아지는 구조라 현장 조건을 확인해 커버 없이 시공했습니다.')],
+            'cases/samgye-guji-village3-prugio-black-stainless/index.html':[
+              ('이번 현장의 롤러는 어떤 상태여서 정비했나요?','기존 롤러가 녹슬고 파손된 상태여서 블랙스텐망 교체와 함께 롤러를 정비했습니다.')],
+            'cases/samgye-guji-village3-prugio-fine-screen/index.html':[
+              ('방충망 4개를 교체한 뒤 어떤 부분까지 확인했나요?','미세방충망 교체 후 모헤어와 롤러, 창의 개폐와 이탈 상태까지 함께 점검했습니다.')],
+            'cases/samgye-halla-vivaldi-fine-screen/index.html':[
+              ('찢어진 미세촘촘망을 재시공할 때 기존 접착제와 가스켓은 어떻게 처리했나요?','기존 망을 제거한 뒤 남은 접착제와 가스켓을 정리하고 노후 모헤어를 교체한 다음 새 미세촘촘망으로 재시공했습니다.')],
+            'cases/samgye-office-pj-roll/index.html':[
+              ('갈매기 몰딩 구조에서 3면 상하 방식을 적용한 이유는 무엇인가요?','사이드의 계단식 갈매기 몰딩과 장착 공간을 확인한 뒤 이번 현장에는 기존과 같은 3면 구조의 상하 작동 방식으로 주문 제작했습니다.')],
+            'cases/yulha-dongwon-louver-screen/index.html':[
+              ('이번 실외기실에는 어떤 루버망을 사용했나요?','구멍 나고 노후된 기존 루버망을 실측한 뒤 화이바글라스 루버방충망으로 주문 제작해 교체했습니다.')],
+            'cases/yulha-jungang-heights-pj-roll/index.html':[
+              ('이번 시스템창의 기존 PJ롤방충망은 왜 탈거가 까다로웠나요?','기존 제품의 고정 방식을 바로 파악하기 어려워 프레임과 창호를 손상시키지 않도록 고정부를 확인하며 탈거했습니다.')],
+            'cases/yulha-seohui-starhills-fine-screen/index.html':[
+              ('방충망이 뻑뻑하거나 끌리면 롤러 문제인가요?','이번 현장에서는 롤러의 작동 상태가 좋지 않아 망과 모헤어 교체와 함께 롤러도 정비했습니다. 뻑뻑함의 원인은 현장 상태를 함께 확인해야 합니다.')],
+          }
+
+          if set(faq_map) != {p.as_posix() for p in detail_files}:
+              missing={p.as_posix() for p in detail_files}-set(faq_map)
+              extra=set(faq_map)-{p.as_posix() for p in detail_files}
+              raise SystemExit(f'faq map mismatch missing={missing} extra={extra}')
+
+          def set_intro(text, intro, rel):
+              pat=re.compile(r'(<div class="detail-heading">.*?<h1>.*?</h1>)<p>.*?</p>(</div>)', re.S)
+              new,n=pat.subn(lambda m: m.group(1)+f'<p>{intro}</p>'+m.group(2), text, count=1)
+              if n!=1:
+                  raise SystemExit(f'intro marker failed: {rel}')
+              return new
+
+          faq_pat=re.compile(r'<section class="case-faq">.*?</section>', re.S)
+          def set_faq(text, items, rel):
+              m=faq_pat.search(text)
+              if not m:
+                  raise SystemExit(f'faq section missing: {rel}')
+              if not items:
+                  return text[:m.start()]+text[m.end():]
+              body='<section class="case-faq"><h2>자주 묻는 질문</h2>'
+              for q,a in items:
+                  body+=f'<h3>{q}</h3><p>{a}</p>'
+              body+='</section>'
+              return text[:m.start()]+body+text[m.end():]
+
+          for rel,intro in intro_map.items():
+              p=Path(rel); text=p.read_text(encoding='utf-8'); text=set_intro(text,intro,rel); p.write_text(text,encoding='utf-8')
+
+          # N34 content consistency: keep H1, but align meta/summary/body with confirmed mohair work.
+          rel='cases/jinyeong-fine-screen/index.html'
+          p=Path(rel); text=p.read_text(encoding='utf-8')
+          text=text.replace('김해 진영 중흥S클래스리버티3단지에서 미세방충망을 교체한 시공사례입니다. 창 크기와 시공 수량, 기존 방충망 상태를 확인해 상담합니다.','김해 진영 중흥S클래스리버티3단지에서 미세방충망과 모헤어를 함께 교체한 시공사례입니다.')
+          text=text.replace('김해 진영 중흥S클래스리버티3단지 미세방충망 교체 현장입니다.','김해 진영 중흥S클래스리버티3단지 미세방충망·모헤어 교체 현장입니다.')
+          text=text.replace('<div><dt>작업</dt><dd>방충망 교체</dd></div>','<div><dt>작업</dt><dd>미세방충망·모헤어 교체</dd></div>')
+          text=text.replace('미세방충망은 창 크기와 시공 수량을 확인해 견적을 안내합니다.','미세방충망 교체와 함께 모헤어까지 정비한 현장입니다.')
+          text=text.replace('중흥S클래스리버티3단지의 창문 방충망을 미세방충망으로 교체했습니다. 작업 전에는 창 크기와 교체 수량을 확인하고 현장 조건에 맞춰 시공합니다.','중흥S클래스리버티3단지의 창문 방충망을 미세방충망으로 교체하고 모헤어도 함께 교체했습니다.')
+          text=text.replace('교체를 마친 방충망을 모아 망 상태와 마감을 확인했습니다. 현장에 따라 창 크기와 수량이 다르기 때문에 상담 시 현재 방충망 사진을 함께 보내주시면 확인에 도움이 됩니다.','교체를 마친 방충망과 모헤어 상태, 마감을 함께 확인했습니다.')
+          p.write_text(text,encoding='utf-8')
+
+          for rel,items in faq_map.items():
+              p=Path(rel); text=p.read_text(encoding='utf-8'); text=set_faq(text,items,rel); p.write_text(text,encoding='utf-8')
+
+          # Verification: H1/SEO titles unchanged; FAQ 0~2 only; no generic consultation FAQ remains.
+          total_q=0
+          zero_faq=[]
+          for p in detail_files:
+              rel=p.as_posix(); text=p.read_text(encoding='utf-8')
+              mh=re.search(r'<h1>(.*?)</h1>', text, re.S)
+              mt=re.search(r'<title>(.*?)</title>', text, re.S)
+              if (mh.group(1) if mh else '') != original_h1[rel]:
+                  raise SystemExit(f'H1 changed unexpectedly: {rel}')
+              if (mt.group(1) if mt else '') != original_title[rel]:
+                  raise SystemExit(f'title changed unexpectedly: {rel}')
+              faq=faq_pat.search(text)
+              qcount=len(re.findall(r'<h3>.*?</h3>', faq.group(0), re.S)) if faq else 0
+              if qcount>2:
+                  raise SystemExit(f'too many FAQ items: {rel} -> {qcount}')
+              total_q+=qcount
+              if qcount==0: zero_faq.append(rel)
+              for banned in ('견적은 어떻게','사진으로 먼저 상담','기존 방충망 틀은 그대로 사용할 수 있나요?','방충망 교체할 때 모헤어도 같이'):
+                  if banned in (faq.group(0) if faq else ''):
+                      raise SystemExit(f'generic FAQ remains in {rel}: {banned}')
+
+          n34=Path('cases/jinyeong-fine-screen/index.html').read_text(encoding='utf-8')
+          for marker in ('미세방충망과 모헤어를 함께 교체한 시공사례입니다.','미세방충망·모헤어 교체','모헤어도 함께 교체했습니다.'):
+              if marker not in n34:
+                  raise SystemExit(f'N34 consistency marker missing: {marker}')
+
+          for rel,intro in intro_map.items():
+              text=Path(rel).read_text(encoding='utf-8')
+              if f'<p>{intro}</p></div>' not in text:
+                  raise SystemExit(f'intro verification failed: {rel}')
+
+          print('Phase 2 verified: 36 detail pages, H1/title unchanged')
+          print('FAQ total:', total_q, 'zero-FAQ pages:', len(zero_faq))
+          print('Zero FAQ:', ', '.join(zero_faq))
+          print('Intro compressed pages:', len(intro_map))
+          PY
+      - name: Commit phase 2 fixes
+        shell: bash
+        run: |
+          git config user.name "thejhomecare"
+          git config user.email "thej2homecare@gmail.com"
+          git add cases
+          if git diff --cached --quiet; then
+            echo "No content changes"
+            exit 0
+          fi
+          git commit -m "Apply phase 2 content cleanup"
+          git push
