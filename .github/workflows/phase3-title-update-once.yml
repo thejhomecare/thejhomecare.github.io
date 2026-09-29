@@ -1,0 +1,101 @@
+name: One-time phase 3 title update
+on:
+  push:
+    paths:
+      - '.github/workflows/phase3-title-update-once.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply approved phase 3 titles
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          items = {
+            'cases/naedong-hanjin-pvc-frame-black-stainless/index.html': {
+              'slug':'naedong-hanjin-pvc-frame-black-stainless',
+              'old':'김해 내동 한진아파트 방충망틀 제작, 블랙스텐망 0.14/28 시공',
+              'new':'김해 내동 한진아파트 추락 파손 방충망틀 제작, 블랙스텐망 0.14/28 시공',
+            },
+            'cases/yulha-jungang-heights-pj-roll/index.html': {
+              'slug':'yulha-jungang-heights-pj-roll',
+              'old':'김해 율하 중앙하이츠 시스템창 PJ롤방충망 교체, 주문 제작·틈새 마감',
+              'new':'김해 율하 중앙하이츠 시스템창 PJ롤방충망 교체, 고정방식 확인 후 탈거',
+            },
+            'cases/sambang-international-shopping-town-entrance/index.html': {
+              'slug':'sambang-international-shopping-town-entrance',
+              'old':'김해 삼방동 국제쇼핑타운 올블랙 현관방충망 시공, 도어클로저 간섭 조정',
+              'new':'김해 삼방동 국제쇼핑타운 올블랙 미세촘촘 현관방충망 시공',
+            },
+          }
+
+          for rel, d in items.items():
+              p=Path(rel)
+              text=p.read_text(encoding='utf-8')
+              old=d['old']; new=d['new']
+              checks=[
+                  (f'<title>{old} | 더제이홈케어</title>', f'<title>{new} | 더제이홈케어</title>'),
+                  (f'<meta property="og:title" content="{old} | 더제이홈케어">', f'<meta property="og:title" content="{new} | 더제이홈케어">'),
+                  (f'<h1>{old}</h1>', f'<h1>{new}</h1>'),
+              ]
+              for a,b in checks:
+                  if a not in text:
+                      raise SystemExit(f'missing expected title marker in {rel}: {a}')
+                  text=text.replace(a,b,1)
+              p.write_text(text,encoding='utf-8')
+
+          # Update list/card titles wherever these detail URLs are rendered.
+          list_files=[Path('cases/index.html')]
+          list_files += sorted(Path('cases/page').glob('*/index.html'))
+          list_files += sorted(Path('cases/category').glob('*/index.html'))
+          for p in list_files:
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              orig=text
+              for d in items.values():
+                  slug=re.escape(d['slug'])
+                  new=d['new']
+                  pat=re.compile(r'(<article\b.*?<a\b[^>]*href="/cases/'+slug+r'/".*?<h2>)(.*?)(</h2>)', re.S)
+                  text,n=pat.subn(lambda m: m.group(1)+new+m.group(3), text, count=1)
+              if text != orig:
+                  p.write_text(text,encoding='utf-8')
+
+          # Verification.
+          for rel,d in items.items():
+              text=Path(rel).read_text(encoding='utf-8')
+              new=d['new']; old=d['old']
+              for marker in (f'<title>{new} | 더제이홈케어</title>', f'<meta property="og:title" content="{new} | 더제이홈케어">', f'<h1>{new}</h1>'):
+                  if marker not in text:
+                      raise SystemExit(f'verification failed: {rel} -> {marker}')
+              if f'<h1>{old}</h1>' in text or f'<title>{old} | 더제이홈케어</title>' in text:
+                  raise SystemExit(f'old detail title remains: {rel}')
+
+          # Ensure each target is represented with the new title on at least one list page.
+          combined='\n'.join(p.read_text(encoding='utf-8') for p in list_files if p.exists())
+          for d in items.values():
+              if f'href="/cases/{d["slug"]}/"' not in combined or f'<h2>{d["new"]}</h2>' not in combined:
+                  raise SystemExit(f'list title not updated for {d["slug"]}')
+
+          print('Phase 3 title update verified for 3 cases')
+          PY
+      - name: Commit phase 3 title updates
+        shell: bash
+        run: |
+          git config user.name "thejhomecare"
+          git config user.email "thej2homecare@gmail.com"
+          git add cases
+          if git diff --cached --quiet; then
+            echo "No content changes"
+            exit 0
+          fi
+          git commit -m "Apply approved phase 3 case titles"
+          git push
