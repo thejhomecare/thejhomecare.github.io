@@ -4,7 +4,7 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   const path=location.pathname.endsWith('/')?location.pathname:location.pathname+'/';
   if(!path.startsWith('/cases/'))return;
 
-  const counts={total:34,fine:10,black:14,entrance:6,pj:3,louver:1};
+  const counts={total:35,fine:10,black:15,entrance:6,pj:3,louver:1};
   const setCount=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=String(value)};
 
   setCount('.board-switch a span',counts.total);
@@ -37,6 +37,12 @@ const yearEl=document.getElementById('year');if(yearEl)yearEl.textContent=new Da
   if(path==='/cases/'||path==='/cases/category/fine/'){
     const list=document.querySelector('.board-list');
     if(list&&!list.querySelector('[data-case-id="N14"]'))list.insertAdjacentHTML('afterbegin',n14Markup);
+  }
+
+  const n15Markup=`<article class="board-row" data-case-id="N15"><a class="board-post" href="/cases/jangyu-villa-black-stainless/"><span class="post-number" aria-hidden="true">${path==='/cases/category/black-stainless/'?'15':'35'}</span><div class="post-copy"><p class="post-meta"><span class="post-category">블랙스텐망</span><span>김해 장유 · 빌라 · 보수테이프 망·노후 모헤어</span></p><h2>김해 장유 빌라 미세 블랙스텐망 시공</h2><p class="post-summary">테이프로 임시 보수해 사용하던 기존 망을 0.14/28메쉬 미세 블랙스텐망으로 교체하고 삭은 모헤어까지 함께 정비.</p><span class="post-read">시공사례 보기 ↗</span></div><img class="board-photo" src="/images/cases/screens/gimhae/jangyu-villa-black-stainless/gimhae-jangyu-villa-black-stainless-hero.webp" alt="김해 장유 빌라 미세 블랙스텐망 교체 완료" width="1200" height="1600" loading="lazy"></a></article>`;
+  if(path==='/cases/'||path==='/cases/category/black-stainless/'){
+    const list=document.querySelector('.board-list');
+    if(list&&!list.querySelector('[data-case-id="N15"]'))list.insertAdjacentHTML('afterbegin',n15Markup);
   }
 
   const strong=document.querySelector('.board-count strong');
