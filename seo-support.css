@@ -1,0 +1,26 @@
+/* Scoped additions for related cases and quote/service guidance. */
+.seo-related { border-top: 1px solid var(--line); padding-top: 28px; }
+.seo-related-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.seo-related-card { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 22px; min-width: 0; }
+.seo-related-card:hover { background: var(--surface); }
+.seo-related-card h3 { font-size: 1.05rem; line-height: 1.6; }
+.seo-related-card p { font-size: .875rem; color: var(--muted); margin: 0; }
+.seo-related-card span { margin-top: auto; font-size: .875rem; font-weight: 700; }
+.seo-guide { padding-top: 30px; padding-bottom: 30px; border-top: 1px solid var(--line); }
+.seo-guide h2 { font-size: 1.65rem; margin-bottom: 24px; }
+.seo-guide > p { margin-top: 18px; color: var(--muted); }
+.seo-guide .info-actions { padding: 18px 0 0; }
+.seo-guide-list { margin: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }
+.seo-guide-list dt { font-weight: 700; margin-bottom: 10px; }
+.seo-guide-list dd { margin: 0; line-height: 1.8; color: var(--muted); font-size: .9375rem; }
+.seo-process { margin: 0; padding-left: 24px; }
+.seo-process li { padding-left: 5px; margin: 16px 0; }
+.seo-process p { color: var(--muted); margin-top: 8px; }
+.seo-service-links { margin: 0 24px 24px; display: flex; flex-direction: column; align-items: flex-start; }
+.seo-service-links .text-link { font-size: .875rem; line-height: 1.7; }
+@media(max-width:760px) {
+  .seo-related-grid,.seo-guide-list { grid-template-columns: 1fr; }
+  .seo-related-card { padding: 18px; }
+  .seo-guide h2 { font-size: 1.4rem; }
+  .seo-service-links { margin: 0 20px 20px; }
+}
