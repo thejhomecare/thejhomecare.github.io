@@ -1,0 +1,97 @@
+/* Mobile spacing and contact readability, 2026-10-03. */
+@media (max-width: 760px) {
+  .home-page .hero-home,
+  .home-page .hero-home-content {
+    min-height: 0;
+  }
+
+  .home-page .hero-home-content {
+    justify-content: center;
+    padding: 34px 0 28px;
+  }
+
+  .home-page .hero-trust {
+    margin-top: 20px;
+  }
+
+  .home-page .contact-section {
+    padding: 34px 0;
+  }
+
+  .home-page .contact-grid {
+    gap: 24px;
+  }
+
+  /* This block already has a dark background; preserve its light text. */
+  .home-page .contact-grid > div:first-child {
+    color-scheme: only dark;
+  }
+
+  .home-page .contact-grid > div:first-child > p {
+    color: #f3f7fa;
+    opacity: 1;
+    line-height: 1.75;
+  }
+
+  .home-page .contact-grid > div:first-child > .eyebrow {
+    color: var(--lime);
+  }
+
+  .home-page .contact-section h2 {
+    font-size: 1.7rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+  }
+
+  .home-page .contact-region {
+    margin-top: 18px;
+  }
+
+  .pricing-page main#main,
+  .board-main {
+    padding-top: 16px;
+  }
+
+  .pricing-page .board-heading,
+  .board-main .board-heading {
+    padding-top: 18px;
+    padding-bottom: 12px;
+  }
+
+  .pricing-page .board-heading > .eyebrow,
+  .board-main .board-heading > .eyebrow {
+    display: none;
+  }
+
+  .pricing-page .board-heading h1,
+  .board-main .board-heading h1 {
+    font-size: 1.7rem;
+    line-height: 1.35;
+  }
+
+  .pricing-page .board-heading > p:last-child,
+  .board-main .board-heading > p:last-child {
+    margin-top: 12px;
+    font-size: .875rem;
+    line-height: 1.7;
+  }
+
+  /* The page heading already introduces the same price cards. */
+  .pricing-page #prices > .section-heading:first-child {
+    display: none;
+  }
+
+  .pricing-page #prices {
+    padding-top: 8px;
+  }
+
+  /* Each archive has a single board tab duplicating its page title. */
+  .board-main .board-switch {
+    display: none;
+  }
+
+  .board-main .board-filters {
+    padding-top: 12px;
+    padding-bottom: 16px;
+  }
+}
