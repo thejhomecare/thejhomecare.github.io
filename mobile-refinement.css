@@ -1,4 +1,13 @@
 /* Mobile spacing and contact readability, 2026-10-03. */
+.contact-mobile-title,
+.contact-mobile-note {
+  display: none;
+}
+
+.contact-secondary-links {
+  display: contents;
+}
+
 @media (max-width: 760px) {
   html:has(> body.home-page) {
     scroll-padding-top: 100px;
@@ -27,9 +36,10 @@
     gap: 24px;
   }
 
-  /* Show the actual contact choices before the longer introduction. */
+  /* Keep the mobile consultation flow inside one compact card. */
   .home-page .contact-grid > .contact-card {
-    order: -1;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
   }
 
@@ -44,29 +54,48 @@
     font-size: .875rem;
   }
 
-  /* This block already has a dark background; preserve its light text. */
-  .home-page .contact-grid > div:first-child {
-    color-scheme: only dark;
+  .home-page .contact-introduction,
+  .home-page .contact-card > span,
+  .home-page .contact-desktop-note {
+    display: none;
   }
 
-  .home-page .contact-grid > div:first-child > p {
-    color: #f3f7fa;
-    opacity: 1;
-    line-height: 1.75;
-  }
-
-  .home-page .contact-grid > div:first-child > .eyebrow {
-    color: var(--lime);
-  }
-
-  .home-page .contact-section h2 {
-    font-size: 1.7rem;
+  .home-page .contact-card .contact-mobile-title {
+    display: block;
+    font-size: 1.15rem;
     line-height: 1.4;
-    margin-bottom: 16px;
+    margin: 0;
+    color: inherit;
   }
 
-  .home-page .contact-region {
+  .home-page .contact-card .contact-mobile-note {
+    display: block;
     margin-top: 18px;
+    line-height: 1.7;
+  }
+
+  .home-page .contact-card .contact-secondary-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    order: 1;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .home-page .contact-secondary-links .button {
+    width: auto;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px 0;
+    border: 0;
+    background: transparent;
+    font-size: .75rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   .pricing-page main#main,
