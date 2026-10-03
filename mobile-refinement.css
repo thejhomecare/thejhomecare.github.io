@@ -49,7 +49,8 @@
 
   .pricing-page main#main,
   .board-main {
-    padding-top: 16px;
+    /* Match the shared breadcrumb offset on services, materials and details. */
+    padding-top: 24px;
   }
 
   .pricing-page .board-heading,
