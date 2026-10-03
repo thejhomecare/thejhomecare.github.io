@@ -79,10 +79,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    order: 1;
-    margin-top: 14px;
-    padding-top: 10px;
-    border-top: 1px solid var(--line);
+    margin-top: 10px;
   }
 
   .home-page .contact-secondary-links .button {
@@ -97,6 +94,18 @@
     font-weight: 700;
     color: inherit;
     text-decoration: none;
+  }
+
+  .home-page .contact-secondary-links .button:first-child {
+    background: #fee500;
+    color: #191919;
+    border-color: #fee500;
+  }
+
+  .home-page .contact-secondary-links .button:last-child {
+    background: var(--lime);
+    color: var(--ink);
+    border-color: var(--lime);
   }
 
   .home-page .contact-secondary-desktop {
