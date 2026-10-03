@@ -1,5 +1,9 @@
 /* Mobile spacing and contact readability, 2026-10-03. */
 @media (max-width: 760px) {
+  html:has(> body.home-page) {
+    scroll-padding-top: 100px;
+  }
+
   .home-page .hero-home,
   .home-page .hero-home-content {
     min-height: 0;
@@ -15,11 +19,29 @@
   }
 
   .home-page .contact-section {
-    padding: 34px 0;
+    padding: 24px 0;
   }
 
   .home-page .contact-grid {
+    grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  /* Show the actual contact choices before the longer introduction. */
+  .home-page .contact-grid > .contact-card {
+    order: -1;
+    padding: 20px;
+  }
+
+  .home-page .contact-card .phone {
+    font-size: 1.75rem;
+    margin: 8px 0 16px;
+  }
+
+  .home-page .contact-card .button {
+    min-height: 46px;
+    padding: 12px 10px;
+    font-size: .875rem;
   }
 
   /* This block already has a dark background; preserve its light text. */
