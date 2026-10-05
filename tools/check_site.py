@@ -11,6 +11,11 @@ import re
 import sys
 from urllib.parse import unquote, urlsplit
 
+if __package__:
+    from .check_search_metadata import check_search_metadata
+else:
+    from check_search_metadata import check_search_metadata
+
 
 @dataclass(frozen=True)
 class Reference:
@@ -178,6 +183,10 @@ def check_site(root, config):
             if not value or value.startswith("#"):
                 continue
             check_reference(path, Reference(value, css[:match.start()].count("\n") + 1, "CSS url"))
+    if config.get('check_search_metadata', False):
+        search_errors, search_counts = check_search_metadata(root, origin)
+        errors.extend(search_errors)
+        counts.update(search_counts)
     return errors, counts
 
 
@@ -198,7 +207,7 @@ def main():
             print(f"ERROR: {error}", file=sys.stderr)
         print(f"FAIL: {len(errors)} issue(s)", file=sys.stderr)
         return 1
-    print("PASS: local links, assets, anchors and business phone are consistent")
+    print("PASS: all configured site checks passed")
     return 0
 
 
