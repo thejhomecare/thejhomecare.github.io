@@ -2,3 +2,8 @@
 @media (min-width: 901px){
   .materials-page #black-stainless .material-options{grid-template-columns:repeat(3,minmax(0,1fr));}
 }
+
+/* Keep the fine-screen reports and patent together on desktop. */
+@media (min-width: 901px){
+  .materials-page #fine-screen .document-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
